@@ -1,200 +1,334 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
+filetype plugin on            " allows nerdcommenter to work correctly
+syntax on
+set clipboard=unnamed         " configure terminal vim to use mac clipboard
+let mapleader="\<space>"      " remap leader to <space> bar
+set backspace=2               " make backspace work like most other apps
+set laststatus=2              " always display the status line
+set showcmd                   " Show us the command we're typing
+set hlsearch                  " highlight search items
+set updatetime=100
+set number
+
+if has("gui_running")
+  set macligatures
+  set guifont=Fira\ Code:h20
+  set guioptions=
+else
+  set guifont=Fira\ Code
+endif
+
+" automatically rebalance windows on vim resize
+autocmd VimResized * :wincmd =
+
+" zoom a vim pane, <C-w>= to re-balance
+nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
+nnoremap <leader>= :wincmd =<cr>
+
+" Blunt hammer to ignore things from searches
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.yardoc/*,*.exe,*.so,*.dat
+
+" augroup numbertoggle
+  " autocmd!
+  " autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  " autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+" augroup END
+
+" Remap ctrl + s to :w + enter
+noremap <c-s> :w<CR>
+inoremap <c-s> <Esc>:w<CR>
+
+" remap stupid command misspellings
+nmap :Q :q
+nmap :W :w
+
+" redefine the normal window spliting directions
+set splitbelow
+set splitright
+
+" Make buffer switching easier
+nnoremap <leader><Right> :bnext<CR>
+nnoremap <leader><Left> :bprev<CR>
+
+" set nice line breaks
+set breakindent
+set showbreak=\ \ \~~
+set tabstop=4 softtabstop=0 expandtab shiftwidth=2 smarttab
+
+" use [Ctrl]+T plus a directional arrow to go to the tab you want: up to go to the first tab, down to the last, and left or right to go to the previous or next tab.
+map <C-t><up> :tabr<cr>
+map <C-t><down> :tabl<cr>
+map <C-t><left> :tabp<cr>
+map <C-t><right> :tabn<cr>
+
+" Indent guide configuration
+let g:indentLine_char='|'
+
+" Enable mouse in Iterm
+set mouse=a
+set ttymouse=xterm2
+
+" Ruby autocomplete
+autocmd FileType ruby,eruby,haml,slim let g:rubycomplete_buffer_loading = 1
+autocmd FileType ruby,eruby,haml,slim let g:rubycomplete_classes_in_global = 1
+autocmd FileType ruby,eruby,haml,slim let g:rubycomplete_rails = 1
+
+" Make Vim detect slim files
+autocmd BufNewFile,BufRead *.slim setlocal filetype=slim
+
+" Change cursor shape in insert mode
+if $TERM ==# 'screen-256color'
+  set notermguicolors
+  let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
+  let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+  " set termguicolors
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+" call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'L9'
-" Git plugin not hosted on GitHub
-Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-" Plugin 'ascenator/L9', {'name': 'newL9'}
-Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'mileszs/ack.vim'                  " Ack
+Plugin 'scrooloose/nerdtree'              " nerdtree
+Plugin 'Xuyuanp/nerdtree-git-plugin'      " nerdtree-git-plugin
+Plugin 'scrooloose/nerdcommenter'         " nerdcommenter
+Plugin 'airblade/vim-gitgutter'           " gitgutter
+Plugin 'yggdroot/indentline'              " indentline
+Plugin 'tpope/vim-endwise'                " endwise
+Plugin 'terryma/vim-multiple-cursors'     " multiple-cursors
+Plugin 'tpope/vim-surround'               " surround
+Plugin 'slim-template/vim-slim.git'       " slim template highlighting
+Plugin 'tpope/vim-fugitive'               " fugitive
+Plugin 'ctrlpvim/ctrlp.vim'               " ctrlp
+Plugin 'ervandew/supertab'                " supertab
+Plugin 'itchyny/lightline.vim'            " lightline
+Plugin 'thoughtbot/vim-rspec'             " vim-rspec
 
-Plugin 'tpope/vim-rails'
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Plugin 'honza/vim-snippets'
+" Themes
+Plugin 'drewtempelmeyer/palenight.vim'    " palenight theme
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
-"
+
+
 " Brief help
 " :PluginList       - lists configured plugins
 " :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
 " :PluginSearch foo - searches for foo; append `!` to refresh local cache
 " :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
+
 " see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 
-"NERDTree
-"silent! nmap <C-p> :NERDTreeToggle<CR>
-"silent! map <C-f> :NERDTreeFind<CR>
-"let g:NERDTreeMapActivateNode="<C-f>"
-"let g:NERDTreeMapPreview="<F4>"
-let NERDTreeShowHidden=1
+"vim-plug :PlugInstall
+call plug#begin('~/.vim/plugged')
 
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'                 " fzf
+Plug 'moll/vim-bbye'                    " bbye
+Plug 'ntpeters/vim-better-whitespace'   " better-whitespace
+Plug 'hail2u/vim-css3-syntax'           " css3 syntax
+Plug 'jeetsukumaran/vim-buffergator'    " buffergator
+Plug 'raimondi/delimitmate'             " delimitmate (automatic bracket closing)
+Plug 'ekalinin/Dockerfile.vim'          " highlighting for dockerfiles
+Plug 'mattn/emmet-vim'                  " emmet
+Plug 'pangloss/vim-javascript'          " javascript
+Plug 'mxw/vim-jsx'                      " jsx
+Plug 'neomake/neomake'                  " neomake
+Plug 'tpope/vim-rails'                  " rails
+Plug 'tpope/vim-repeat'                 " vim repeat
+Plug 'vim-ruby/vim-ruby'                " ruby
+Plug 'tpope/vim-sensible'               " sensible vim defaults
+Plug 'ervandew/supertab'                " supertab
+Plug 'slim-template/vim-slim'           " slim template highlighting
 
-"fuzzyfinder
-map ; :Files<CR>
+" Themes
+Plug 'nightsense/office'                " Office theme
+Plug 'felipesousa/rupza'                " Rupza theme
+Plug 'chriskempson/vim-tomorrow-theme'  " Tomorrow themes
+Plug 'altercation/vim-colors-solarized' " colors-solarized theme
+Plug 'nightsense/vimspectr'             " Theme with many hues
+Plug 'junegunn/seoul256.vim'            " seoul theme
+" Plug 'chriskempson/base16-vim'          " Base16 themes
+" Plug 'nightsense/carbonized'            " carbonized theme
+" Plug 'nightsense/vim-crunchbang'        " crunchbang theme
 
-"lightline
-let g:lightline = {
-  \     'active': {
-  \         'left': [['mode', 'paste' ], ['readonly', 'filename', 'modified']],
-  \         'right': [['lineinfo'], ['percent'], ['fileformat', 'fileencoding']]
-  \     }
-  \ }
+" Tmux
+Plug 'sjl/vitality.vim'                 " vitality, make vim and tmux play nice together
+Plug 'tmux-plugins/vim-tmux'            " vim tmux
+Plug 'benmills/vimux'                   " vimux, send commands to tmux pane
 
-"gitgutter
-nmap ]c <Plug>GitGutterNextHunk
-nmap [c <Plug>GitGutterPrevHunk
-nmap <Leader>hs <Plug>GitGutterStageHunk
-nmap <Leader>hu <Plug>GitGutterUndoHunk
+" Plug 'mileszs/ack.vim'                  " Ack
+" Plug 'ctrlpvim/ctrlp.vim'               " ctrlp
+" Plug 'gregsexton/matchtag'              " matchtag, for html tag
+" Plug 'flazz/vim-colorschemes'           " colorschemes
+" Plug 'vim-scripts/CSApprox'             " make gui colorshemes work in terminal
+" Plug 'mustache/vim-mustache-handlebars' " hbs
+" Plug 'joshdick/onedark.vim'             " onedark
+" Plug 'godlygeek/tabular'                " tabular
+" Plug 'tpope/vim-unimpaired'             " unimpaired
+" Plug 'sjl/gundo.vim'                    " gundo
 
-"  =========================== Pathogen ========================  "
-execute pathogen#infect()
+call plug#end()
 
-" ==================== Color customization ====================  "
-syntax on
-filetype plugin indent on
-syntax enable
-set background=dark
-colorscheme hybrid
-"colorscheme xcode
-let g:solarized_visibility = "high"
-let g:solarized_contrast = "high"
-let g:solarized_termcolors=256
+" fzf Config
+" This is the default extra key bindings
+"take over ctrlp
+nnoremap <C-p> :Files<Cr>
 
-highlight Search ctermfg=255 ctermbg=166
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
 
-let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
-let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+" Default fzf layout
+" - down / up / left / right
+let g:fzf_layout = { 'down': '~40%' }
 
-au BufNewFile,BufRead *.ejs set filetype=html
-au BufNewFile,BufRead *.cap set filetype=ruby
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+      \ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Conditional'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
-"  =======================Custom Settings ======================  "
-let mapleader = ","
-set clipboard=unnamed
-if (match(system("uname"), "Linux") != -1)
-  set clipboard=unnamedplus
-endif
-set undodir=~/.vim/.undo//
-set directory=~/.vim/swp//
-set conceallevel=0
-set number
-set mouse=a
-set laststatus=2
-set hlsearch
-set backspace=2
-set tabstop=2
-set shiftwidth=2
-set expandtab
-set nowrap
-set wildmenu
-set wildmode=full
-set noswapfile
-set ttimeoutlen=10
+" Enable per-command history.
+" CTRL-N and CTRL-P will be automatically bound to next-history and
+" previous-history instead of down and up. If you don't like the change,
+" explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 
-"  ------ Folding ------ "
-set foldmethod=indent   " fold based on indent level
-set foldnestmax=10      " max 10 depth
-set foldenable          " don't fold files by default on open
-nnoremap <space> za
-set foldlevelstart=5    " start with fold level of 1
-autocmd Syntax c,cpp,vim,xml,html,xhtml setlocal foldmethod=syntax
-autocmd Syntax c,cpp,vim,xml,html,xhtml,perl normal zR
+" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case'.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
 
-function! PasteModeToggle()
-  if(&paste == 0)
-    set paste
-  else
-    set nopaste
-  endif
-endfunc
-map <leader>pm :call PasteModeToggle()<cr>
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
-"  ===================== Custom Bindings =======================  "
-map <c-l> :tabn<cr>
-map <c-h> :tabp<cr>
-map <c-n> :tabnew<cr>
-map <c-t> :NERDTreeToggle<cr>
-map <c-n> :tabnew<cr>
-map <c-q> :tabclose<cr>
-map <c-w>r :so ~/.vimrc<cr>
-map <c-w>_ :sp<cr>
-map <c-w>\ :vs<cr>
-map <c-w>N <plug>NERDTreeTabsToggle<cr>
+" Change leader key for emmet
+let g:user_emmet_leader_key='<C-e>'
 
-" =========================== Silver Searcher =============================== "
+" CUSTOM KEY MAPPINGS
+" Hitting ESC is hard
+inoremap jk <Esc>
+vnoremap jk <Esc>
+inoremap JK <Esc>
+vnoremap JK <Esc>
+" LEADER KEY MAPPINGS
+" Make buffer switching easier
+nmap <leader>L :bnext<CR>
+nmap <leader>H :bprev<CR>
+" Jump to first and last character of line, respectively
+nnoremap <leader>h ^
+vnoremap <leader>h ^
+nnoremap <leader>l $
+vnoremap <leader>l $h
+" Jump to beginning of line
+nmap <leader>hh 0
+" Disable highlight when <leader><cr> is pressed
+map <silent> <leader><cr> :noh<cr>
+" Write file
+nmap <leader>w :w<cr>
+" Quit Vim
+nmap <leader>q :q<cr>
+" Quit Vim (without saving)
+nmap <leader>Q :q!<cr>
+" Quit current buffer
+nmap <leader>b :bd<cr>
+" Switch (split) buffer
+nnoremap <leader>s <C-W><C-W>
+
+" Config NERDTree
+map <C-a> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['.DS_Store', '*.swp', '*.swo']
+let NERDTreeHighlightCursorline=1   "Highlight the selected entry in the tree
+let NERDTreeShowLineNumbers=0
+let NERDTreeMinimalUI=1
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " auto kill nerdtree if it is the only buffer
+
+" Config NERDCommenter
+let NERDSpaceDelims=1               " space around delimiters
+let NERDRemoveExtraSpaces=1
+
+"" The Silver Searcher
 if executable('ag')
+  " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-  let g:ctrlp_user_caching = 0
-  command! -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
-  nnoremap \ :Ag<SPACE>
-  let g:ackprg = 'ag --nogroup --nocolor --column'
-  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ackprg = 'ag --vimgrep'
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
+let g:ackhighlight = 1
+let g:ack_autofold_results = 1
+let g:ackpreview = 1
+
+cnoreabbrev Ack Ack!
+nnoremap <Leader>a :Ack!<Space>'
+
+" multicursor config
+let g:multi_cursor_start_key='g<C-o>'
+let g:multi_cursor_next_key='<C-o>'
+let g:multi_cursor_prev_key='<C-p>'
+let g:multi_cursor_skip_key='<C-x>'
+let g:multi_cursor_quit_key='<Esc>'
+
+" Theme config
+set background=dark
+colorscheme palenight
+if (has("termguicolors"))
+  set termguicolors
 endif
 
-" ======================== Syntastic ============================ "
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" Lightline config
+let g:lightline = { 'colorscheme': 'palenight' }
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_quiet_messages = {'regex': 'eslintignore|unused'}
+" Syntax Settings
+syntax enable
+if !has('gui_running')
+  set t_Co=256
+endif
 
-" ======================== FZF ============================ "
-set rtp+=~/.fzf
-nmap <Leader>; :Buffers<CR>
-nmap <c-p> :FZF<CR>
-nmap <Leader>t :Files<CR>
-nmap <Leader>r :Tags<CR>
+" For when slim highlighting doesn't work
+autocmd BufNewFile,BufRead *.slim set ft=slim
 
-" ======================== AIRLINE ============================ "
-let g:airline_section_y = ''
-let g:airline_section_z = ''
-let g:airline_theme='dark'
-"\'z'       : '#(uname)',
-let g:tmuxline_preset = {
-  \'a'       : '#S',
-  \'win'     : '#I #W',
-  \'cwin'    : '#I #W',
-  \'x'       : '#(~/dotfiles/scripts/spotify.sh)',
-  \'z'       : ['%a %D %l:%M %p'],
-  \'options' : { 'status-justify' : 'left' }}
+" visual selection fix in tmux
+if $TERM ==# 'screen-256color'
+  set t_ut=
+  set term=screen-256color
+endif
 
-
-source ~/.vim/plugins.vim
-Plugin 'wakatime/vim-wakatime'
-
-
+filetype plugin indent on    " required
+" Autocomplete
+set omnifunc=syntaxcomplete#Complete
