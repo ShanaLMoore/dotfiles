@@ -1,3 +1,5 @@
+" Basic Behavior
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 filetype plugin on            " allows nerdcommenter to work correctly
@@ -10,6 +12,19 @@ set showcmd                   " Show us the command we're typing
 set hlsearch                  " highlight search items
 set updatetime=100
 set number
+set ruler                     " show ine and column number of the cursor on right side of statusline
+set visualbell                " blink ursor on error, instead of beeping
+set wildmenu                  " visual utocomplete for command menu
+set lazyredraw                " redraw creen only when we need to
+set showmatch                 " highlight atching parentheses / brackets [{()}]
+set number                    " show ine numbers
+set wrap                      " wrap ines
+set encoding=utf-8            " set ncoding to UTF-8 (default was "latin1")
+set visualbell          " blink cursor on error, instead of beeping
+
+
+" turn off search highlighting with <CR> (carriage-return)
+nnoremap <CR> :nohlsearch<CR><CR>
 
 if has("gui_running")
   set macligatures
@@ -43,6 +58,10 @@ inoremap <c-s> <Esc>:w<CR>
 nmap :Q :q
 nmap :W :w
 
+" move vertically by visual line (don't skip wrapped lines)
+nmap j gj
+nmap k gk
+
 " redefine the normal window spliting directions
 set splitbelow
 set splitright
@@ -55,6 +74,9 @@ nnoremap <leader><Left> :bprev<CR>
 set breakindent
 set showbreak=\ \ \~~
 set tabstop=4 softtabstop=0 expandtab shiftwidth=2 smarttab
+
+set autoindent          " copy indent from current line when starting a new line
+set smartindent         " even better autoindent (e.g. add indent after '{')
 
 " use [Ctrl]+T plus a directional arrow to go to the tab you want: up to go to the first tab, down to the last, and left or right to go to the previous or next tab.
 map <C-t><up> :tabr<cr>
@@ -112,7 +134,7 @@ Plugin 'terryma/vim-multiple-cursors'     " multiple-cursors
 Plugin 'tpope/vim-surround'               " surround
 Plugin 'slim-template/vim-slim.git'       " slim template highlighting
 Plugin 'tpope/vim-fugitive'               " fugitive
-Plugin 'ctrlpvim/ctrlp.vim'               " ctrlp
+" Plugin 'ctrlpvim/ctrlp.vim'               " ctrlp
 Plugin 'ervandew/supertab'                " supertab
 Plugin 'itchyny/lightline.vim'            " lightline
 Plugin 'thoughtbot/vim-rspec'             " vim-rspec
